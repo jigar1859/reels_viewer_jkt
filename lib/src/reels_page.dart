@@ -36,7 +36,7 @@ class ReelsPage extends StatefulWidget {
 }
 
 class _ReelsPageState extends State<ReelsPage> {
-  VideoPlayerController? _videoPlayerController;
+  late VideoPlayerController _videoPlayerController;
   ChewieController? _chewieController;
   bool _liked = false;
   @override
@@ -49,15 +49,10 @@ class _ReelsPageState extends State<ReelsPage> {
   }
 
   Future initializePlayer() async {
-    // _videoPlayerController = VideoPlayerController.network(widget.item.url);
-    await Future.wait([_videoPlayerController.initialize()]);
     final uri = Uri.parse(widget.item.url);
-    LogUtil.debugLog(
-        value: uri
-            .toString()); // https://example.com/api/fetch?limit=10,20,30&max=100
-
-    Uri.parse('::Not valid URI::'); // Throws FormatException.
-    _videoPlayerController = VideoPlayerController.networkUrl(uri);
+    LogUtil.debugLog(value: uri.toString());
+    _videoPlayerController = VideoPlayerController.network(widget.item.url);
+    await Future.wait([_videoPlayerController.initialize()]);
     _chewieController = ChewieController(
       videoPlayerController: _videoPlayerController,
       autoPlay: true,
