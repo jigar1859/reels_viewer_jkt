@@ -2,6 +2,7 @@ import 'package:card_swiper/card_swiper.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:reels_viewer/src/models/reel_model.dart';
+import 'package:reels_viewer/src/utils/log_util.dart';
 import 'package:reels_viewer/src/utils/url_checker.dart';
 import 'package:video_player/video_player.dart';
 import 'components/like_icon.dart';
@@ -48,14 +49,20 @@ class _ReelsPageState extends State<ReelsPage> {
   }
 
   Future initializePlayer() async {
-    _videoPlayerController =
-        VideoPlayerController.networkUrl(widget.item.url as Uri);
+    // _videoPlayerController = VideoPlayerController.network(widget.item.url);
     await Future.wait([_videoPlayerController.initialize()]);
+    final uri = Uri.parse(widget.item.url);
+    LogUtil.debugLog(
+        value: uri
+            .toString()); // https://example.com/api/fetch?limit=10,20,30&max=100
+
+    Uri.parse('::Not valid URI::'); // Throws FormatException.
+    _videoPlayerController = VideoPlayerController.networkUrl(uri);
     _chewieController = ChewieController(
       videoPlayerController: _videoPlayerController,
       autoPlay: true,
-      showControls: false,
-      looping: false,
+      showControls: true,
+      looping: true,
     );
     setState(() {});
     _videoPlayerController.addListener(() {
@@ -107,9 +114,9 @@ class _ReelsPageState extends State<ReelsPage> {
                   ),
                 ),
               )
-            : const Column(
+            : Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: [
+                children: const [
                   CircularProgressIndicator(),
                   SizedBox(height: 10),
                   Text('Loading...')
