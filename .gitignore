@@ -29,3 +29,5 @@
 build/
 .vscode/settings.json
 .gitignore
+.flutter-plugins
+.flutter-plugins-dependencies
