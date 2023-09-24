@@ -36,7 +36,7 @@ class ReelsPage extends StatefulWidget {
 }
 
 class _ReelsPageState extends State<ReelsPage> {
-  late VideoPlayerController _videoPlayerController;
+  VideoPlayerController? _videoPlayerController;
   ChewieController? _chewieController;
   bool _liked = false;
   @override
