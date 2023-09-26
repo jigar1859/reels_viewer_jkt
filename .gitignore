@@ -31,3 +31,6 @@ build/
 .gitignore
 .flutter-plugins
 .flutter-plugins-dependencies
+example/windows/flutter/generated_plugins.cmake
+example/windows/flutter/generated_plugins.cmake
+example/pubspec.lock

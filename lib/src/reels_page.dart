@@ -2,6 +2,7 @@ import 'package:card_swiper/card_swiper.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:reels_viewer/src/models/reel_model.dart';
+import 'package:reels_viewer/src/services/video_controller_service.dart';
 import 'package:reels_viewer/src/utils/log_util.dart';
 import 'package:reels_viewer/src/utils/url_checker.dart';
 import 'package:video_player/video_player.dart';
@@ -51,6 +52,7 @@ class _ReelsPageState extends State<ReelsPage> {
   Future initializePlayer() async {
     final uri = Uri.parse(widget.item.url);
     LogUtil.debugLog(value: uri.toString());
+    // VideoPlayerController.setCacheSize(100 * 1024 * 1024, 200 * 1024 * 1024);
     _videoPlayerController = VideoPlayerController.network(widget.item.url);
     await Future.wait([_videoPlayerController.initialize()]);
     _chewieController = ChewieController(

@@ -10,6 +10,7 @@ class ReelModel {
   final String? reelDescription;
   final String? musicName;
   final List<ReelCommentModel>? commentList;
+  static const isNew = 0;
   ReelModel(this.url, this.userName,
       {this.id,
       this.isLiked = false,
