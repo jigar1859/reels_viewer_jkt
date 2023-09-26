@@ -11,6 +11,8 @@ class ReelModel {
   final String? musicName;
   final List<ReelCommentModel>? commentList;
   static const isNew = 0;
+  static const unNecesasry = true;
+
   ReelModel(this.url, this.userName,
       {this.id,
       this.isLiked = false,
