@@ -1,17 +1,36 @@
 import 'package:reels_viewer/reels_viewer.dart';
+import 'package:hive/hive.dart';
 
-class ReelModel {
+part 'reel_model.g.dart';
+
+@HiveType(typeId: 01)
+class ReelModel extends HiveObject {
+  @HiveField(0)
   final String? id;
+
+  @HiveField(1)
   final String url;
+
+  @HiveField(2)
   final bool isLiked;
+
+  @HiveField(3)
   final int likeCount;
+
+  @HiveField(4)
   final String userName;
+
+  @HiveField(5)
   final String? profileUrl;
+
+  @HiveField(6)
   final String? reelDescription;
+
+  @HiveField(7)
   final String? musicName;
+
+  @HiveField(8)
   final List<ReelCommentModel>? commentList;
-  static const isNew = 0;
-  static const unNecesasry = true;
 
   ReelModel(this.url, this.userName,
       {this.id,
