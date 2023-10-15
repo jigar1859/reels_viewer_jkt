@@ -34,22 +34,25 @@ class ReelModel extends HiveObject {
 
   ReelModel(this.url, this.userName,
       {this.id,
-      this.isLiked = false,
-      this.likeCount = 0,
       this.profileUrl,
       this.reelDescription,
       this.musicName,
-      this.commentList});
+      this.commentList,
+      //Hard Coded
+      this.isLiked = false,
+      this.likeCount = 0});
 
-  ReelModel.fromJson(
-      Map<String, dynamic> json, this.likeCount, this.commentList)
+  ReelModel.fromJson(Map<String, dynamic> json)
       : id = json['id'],
         url = json['url'],
-        isLiked = json['isLiked'],
         userName = json['userName'],
         profileUrl = json['profileUrl'],
         reelDescription = json['reelDescription'],
-        musicName = json['musicName'];
+        musicName = json['musicName'],
+        //Hard Coded
+        isLiked = true,
+        likeCount = 5000,
+        commentList = [];
 
   Map<String, dynamic> toJson() => {
         'id': id,
