@@ -20,12 +20,12 @@ class ReelModelAdapter extends TypeAdapter<ReelModel> {
       fields[1] as String,
       fields[4] as String,
       id: fields[0] as String?,
-      isLiked: fields[2] as bool,
-      likeCount: fields[3] as int,
       profileUrl: fields[5] as String?,
       reelDescription: fields[6] as String?,
       musicName: fields[7] as String?,
       commentList: (fields[8] as List?)?.cast<ReelCommentModel>(),
+      isLiked: fields[2] as bool,
+      likeCount: fields[3] as int,
     );
   }
 
