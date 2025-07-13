@@ -37,14 +37,14 @@ class ScreenOptions extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 10, right: 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
                     const SizedBox(height: 110),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         if (item.profileUrl != null)
                           UserProfileImage(profileUrl: item.profileUrl??''),
@@ -54,32 +54,43 @@ class ScreenOptions extends StatelessWidget {
                             radius: 16,
                           ),
                         const SizedBox(width: 6),
-                        Text(item.userName,
-                            style: const TextStyle(color: Colors.white)),
-                        const SizedBox(width: 10),
-                        if (showVerifiedTick)
-                          const Icon(
-                            Icons.verified,
-                            size: 15,
-                            color: Colors.white,
-                          ),
-                        if (showVerifiedTick) const SizedBox(width: 6),
-                        if (onFollow != null)
-                          TextButton(
-                            onPressed: onFollow,
-                            child: const Text(
-                              'Follow',
-                              style: TextStyle(
-                                color: Colors.white,
+                        Expanded(
+                          child: Row(
+                            children: [
+                              Flexible(
+                                child: Text(item.userName,
+                                    style: const TextStyle(color: Colors.white),
+                                    overflow: TextOverflow.ellipsis),
                               ),
-                            ),
+                              if (showVerifiedTick)
+                                const SizedBox(width: 6),
+                              if (showVerifiedTick)
+                                const Icon(
+                                  Icons.verified,
+                                  size: 15,
+                                  color: Colors.white,
+                                ),
+                              if (onFollow != null)
+                                const SizedBox(width: 6),
+                              if (onFollow != null)
+                                TextButton(
+                                  onPressed: onFollow,
+                                  child: const Text(
+                                    'Follow',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ),
+                            ],
                           ),
+                        ),
                       ],
                     ),
                     const SizedBox(width: 6),
                     if (item.reelDescription != null)
                       Text(item.reelDescription ?? '',
-                          style: const TextStyle(color: Colors.white)),
+                          style: const TextStyle(color: Colors.white),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis),
                     const SizedBox(height: 10),
                     if (item.musicName != null)
                       Row(
@@ -89,13 +100,17 @@ class ScreenOptions extends StatelessWidget {
                             size: 15,
                             color: Colors.white,
                           ),
-                          Text(
-                            'Original Audio - ${item.musicName}',
-                            style: const TextStyle(color: Colors.white),
+                          Flexible(
+                            child: Text(
+                              'Original Audio - ${item.musicName}',
+                              style: const TextStyle(color: Colors.white),
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           ),
                         ],
                       ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
               Column(

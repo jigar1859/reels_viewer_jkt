@@ -38,6 +38,9 @@ class ReelsViewer extends StatefulWidget {
   /// for show/hide video progress indicator, by default true
   final bool showProgressIndicator;
 
+  /// for auto advance to next video when current video ends, by default false
+  final bool autoAdvance;
+
   /// function invoke when user click on back btn
   final Function()? onClickBackArrow;
 
@@ -54,7 +57,8 @@ class ReelsViewer extends StatefulWidget {
     this.showAppbar = true,
     this.onClickBackArrow,
     this.onIndexChanged,
-    this.showProgressIndicator =true,
+    this.showProgressIndicator = true,
+    this.autoAdvance = false,
   }) : super(key: key);
 
   @override
@@ -72,7 +76,7 @@ class _ReelsViewerState extends State<ReelsViewer> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black26,
+      backgroundColor: Colors.black,
       body: SafeArea(
         child: Stack(
           children: [
@@ -80,6 +84,7 @@ class _ReelsViewerState extends State<ReelsViewer> {
             Swiper(
               itemBuilder: (BuildContext context, int index) {
                 return ReelsPage(
+                  key: ValueKey(widget.reelsList[index].url),
                   item: widget.reelsList[index],
                   onClickMoreBtn: widget.onClickMoreBtn,
                   onComment: widget.onComment,
@@ -89,12 +94,16 @@ class _ReelsViewerState extends State<ReelsViewer> {
                   showVerifiedTick: widget.showVerifiedTick,
                   swiperController: controller,
                   showProgressIndicator: widget.showProgressIndicator,
+                  autoAdvance: widget.autoAdvance,
                 );
               },
               controller: controller,
               itemCount: widget.reelsList.length,
               scrollDirection: Axis.vertical,
               onIndexChanged: widget.onIndexChanged,
+              autoplay: false,
+              loop: false,
+              viewportFraction: 1.0,
             ),
             if (widget.showAppbar)
               Container(

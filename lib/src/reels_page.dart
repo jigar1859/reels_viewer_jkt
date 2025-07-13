@@ -19,6 +19,8 @@ class ReelsPage extends StatefulWidget {
   final Function()? onFollow;
   final SwiperController swiperController;
   final bool showProgressIndicator;
+  final bool autoAdvance;
+
   const ReelsPage({
     Key? key,
     required this.item,
@@ -29,6 +31,8 @@ class ReelsPage extends StatefulWidget {
     this.onLike,
     this.onShare,
     this.showProgressIndicator = true,
+    this.autoAdvance = false,
+
     required this.swiperController,
   }) : super(key: key);
 
@@ -37,45 +41,42 @@ class ReelsPage extends StatefulWidget {
 }
 
 class _ReelsPageState extends State<ReelsPage> {
-  late VideoPlayerController _videoPlayerController;
+  VideoPlayerController? _videoPlayerController;
   ChewieController? _chewieController;
   bool _liked = false;
+  VoidCallback? _videoListener;
   @override
   void initState() {
     super.initState();
     if (!UrlChecker.isImageUrl(widget.item.url) &&
         UrlChecker.isValid(widget.item.url)) {
+      // Initialize all videos immediately
       initializePlayer();
     }
   }
 
   Future initializePlayer() async {
-    final uri = Uri.parse(widget.item.url);
-    LogUtil.debugLog(value: uri.toString());
-    // VideoPlayerController.setCacheSize(100 * 1024 * 1024, 200 * 1024 * 1024);
-    _videoPlayerController = VideoPlayerController.network(widget.item.url);
-    await Future.wait([_videoPlayerController.initialize()]);
-    _chewieController = ChewieController(
-      videoPlayerController: _videoPlayerController,
-      autoPlay: true,
-      showControls: true,
-      looping: true,
-    );
-    setState(() {});
-    _videoPlayerController.addListener(() {
-      if (_videoPlayerController.value.position ==
-          _videoPlayerController.value.duration) {
-        widget.swiperController.next();
-      }
-    });
+    try {
+      _videoPlayerController = VideoPlayerController.network(widget.item.url);
+      await _videoPlayerController!.initialize();
+      
+      _chewieController = ChewieController(
+        videoPlayerController: _videoPlayerController!,
+        autoPlay: true,
+        showControls: true,
+        looping: true,
+      );
+      
+      if (mounted) setState(() {});
+    } catch (e) {
+      if (mounted) setState(() {});
+    }
   }
 
   @override
   void dispose() {
-    _videoPlayerController.dispose();
-    if (_chewieController != null) {
-      _chewieController!.dispose();
-    }
+    _videoPlayerController?.dispose();
+    _chewieController?.dispose();
     super.dispose();
   }
 
@@ -90,45 +91,86 @@ class _ReelsPageState extends State<ReelsPage> {
       children: [
         _chewieController != null &&
                 _chewieController!.videoPlayerController.value.isInitialized
-            ? FittedBox(
-                fit: BoxFit.cover,
-                child: SizedBox(
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height,
-                  child: GestureDetector(
-                    onDoubleTap: () {
-                      if (!widget.item.isLiked) {
-                        _liked = true;
-                        if (widget.onLike != null) {
-                          widget.onLike!(widget.item.url);
-                        }
-                        setState(() {});
-                      }
-                    },
-                    child: Chewie(
-                      controller: _chewieController!,
+            ? (_videoPlayerController?.value.hasError == true
+                ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.error_outline, color: Colors.red, size: 60),
+                        SizedBox(height: 16),
+                        Text(
+                          'Failed to load video',
+                          style: TextStyle(color: Colors.white, fontSize: 18),
+                        ),
+                        SizedBox(height: 8),
+                        Text(
+                          widget.item.url,
+                          style: TextStyle(color: Colors.white70, fontSize: 12),
+                          textAlign: TextAlign.center,
+                        ),
+                        SizedBox(height: 16),
+                        ElevatedButton(
+                          onPressed: () {
+                            initializePlayer();
+                          },
+                          child: Text('Retry'),
+                        ),
+                      ],
                     ),
+                  )
+                : FittedBox(
+                    fit: BoxFit.cover,
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height,
+                      child: GestureDetector(
+                        onDoubleTap: () {
+                          if (!widget.item.isLiked) {
+                            _liked = true;
+                            if (widget.onLike != null) {
+                              widget.onLike!(widget.item.url);
+                            }
+                            setState(() {});
+                          }
+                        },
+                        child: Chewie(
+                          controller: _chewieController!,
+                        ),
+                      ),
+                    ),
+                  ))
+            : Container(
+                color: Colors.black,
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CircularProgressIndicator(color: Colors.white),
+                      SizedBox(height: 16),
+                      Text(
+                        'Loading video...',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        widget.item.url,
+                        style: TextStyle(color: Colors.white70, fontSize: 10),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
                   ),
                 ),
-              )
-            : Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
-                  CircularProgressIndicator(),
-                  SizedBox(height: 10),
-                  Text('Loading...')
-                ],
               ),
         if (_liked)
           const Center(
             child: LikeIcon(),
           ),
-        if (widget.showProgressIndicator)
+        if (widget.showProgressIndicator && _videoPlayerController != null)
           Positioned(
             bottom: 0,
             width: MediaQuery.of(context).size.width,
             child: VideoProgressIndicator(
-              _videoPlayerController,
+              _videoPlayerController!,
               allowScrubbing: false,
               colors: const VideoProgressColors(
                 backgroundColor: Colors.blueGrey,
